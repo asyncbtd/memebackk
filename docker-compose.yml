@@ -1,0 +1,29 @@
+services:
+  back:
+    build:
+      context: ./backend/memeback
+      dockerfile: Dockerfile
+    networks:
+      - main
+
+  nginx:
+    build:
+      context: ./frontend/my-gallery-app
+      dockerfile: Dockerfile
+    networks:
+      - main
+
+  cloudflare:
+    image: docker.io/cloudflare/cloudflared:2025.11.1
+    command: #["executable", "arg"]
+      - 'tunnel'
+      - '--no-autoupdate'
+      - 'run'
+      - '--token'
+      - 'eyJhIjoiYThjYTc5NzkyNjQ0OTZiMzgxOWE4YTI5ZmEwMTYzNTQiLCJ0IjoiNGFjZDFhZDQtNzMwNC00MjQwLTk4ZjQtNWY4ZDM2M2MxODE3IiwicyI6Ik16TmlaR1F3T0dVdE5qTXdOQzAwWTJJeExUa3hNVE10WVRSa1lqTmxZbU0zTkdReSJ9'
+    networks:
+      - main
+
+networks:
+  main:
+    driver: bridge
