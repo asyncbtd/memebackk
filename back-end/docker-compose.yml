@@ -1,0 +1,18 @@
+services:
+  postgres:
+    image: docker.io/postgres:18.3-alpine3.23
+    ports:
+      - "5432:5432"
+    networks:
+      - main
+
+  back:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    networks:
+      - main
+
+networks:
+  main:
+    driver: bridge
