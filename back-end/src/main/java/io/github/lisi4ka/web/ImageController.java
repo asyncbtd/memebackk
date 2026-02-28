@@ -1,7 +1,7 @@
-package io.github.lisi4ka.controller;
+package io.github.lisi4ka.web;
 
-import io.github.lisi4ka.model.Image;
-import io.github.lisi4ka.dto.ImageResponse;
+import io.github.lisi4ka.service.model.Image;
+import io.github.lisi4ka.web.dto.ImageResponse;
 import io.github.lisi4ka.service.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;

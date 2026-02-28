@@ -1,7 +1,7 @@
 package io.github.lisi4ka.service;
 
-import io.github.lisi4ka.model.Image;
-import io.github.lisi4ka.repository.ImageRepository;
+import io.github.lisi4ka.service.model.Image;
+import io.github.lisi4ka.storage.repository.ImageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

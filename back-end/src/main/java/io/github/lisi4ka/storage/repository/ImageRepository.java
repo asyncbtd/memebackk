@@ -1,6 +1,6 @@
-package io.github.lisi4ka.repository;
+package io.github.lisi4ka.storage.repository;
 
-import io.github.lisi4ka.model.Image;
+import io.github.lisi4ka.service.model.Image;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

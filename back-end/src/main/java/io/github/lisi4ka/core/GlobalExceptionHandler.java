@@ -1,4 +1,4 @@
-package io.github.lisi4ka.exception;
+package io.github.lisi4ka.core;
 
 public class GlobalExceptionHandler {
 }
