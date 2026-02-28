@@ -1,8 +1,10 @@
 package io.github.lisi4ka.web;
 
+import io.github.lisi4ka.core.mapper.DtoMapper;
 import io.github.lisi4ka.service.model.Image;
 import io.github.lisi4ka.web.dto.ImageResponse;
 import io.github.lisi4ka.service.ImageService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -18,10 +20,11 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/images")
+@RequiredArgsConstructor
 public class ImageController {
 
-    @Autowired
-    private ImageService imageService;
+    private final DtoMapper dtoMapper;
+    private final ImageService imageService;
 
     @PostMapping("/upload")
     public ResponseEntity<?> uploadImage(
@@ -40,7 +43,7 @@ public class ImageController {
             }
 
             Image savedImage = imageService.saveImage(file, title, description);
-            ImageResponse response = convertToResponse(savedImage);
+            ImageResponse response = dtoMapper.toDto(savedImage);
 
             return ResponseEntity.ok(response);
 
@@ -60,7 +63,7 @@ public class ImageController {
         try {
             List<Image> images = imageService.getAllImages();
             List<ImageResponse> responses = images.stream()
-                    .map(this::convertToResponse)
+                    .map(dtoMapper::toDto)
                     .collect(Collectors.toList());
 
             return ResponseEntity.ok(responses);
@@ -84,7 +87,7 @@ public class ImageController {
             }
 
             List<ImageResponse> responses = images.stream()
-                    .map(this::convertToResponse)
+                    .map(dtoMapper::toDto)
                     .collect(Collectors.toList());
 
             return ResponseEntity.ok(responses);
@@ -106,8 +109,8 @@ public class ImageController {
             }
 
             HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.parseMediaType(image.getFileType()));
-            headers.setContentDispositionFormData("inline", image.getOriginalFileName());
+            headers.setContentType(MediaType.parseMediaType(image.fileType()));
+            headers.setContentDispositionFormData("inline", image.originalFileName());
             headers.setCacheControl("max-age=3600"); // Кэшируем на 1 час
 
             return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
@@ -157,24 +160,11 @@ public class ImageController {
             if (image == null) {
                 return ResponseEntity.notFound().build();
             }
-            ImageResponse response = convertToResponse(image);
+            ImageResponse response = dtoMapper.toDto(image);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }
     }
 
-    // Вспомогательный метод для преобразования Image в ImageResponse
-    private ImageResponse convertToResponse(Image image) {
-        return new ImageResponse(
-                image.getId(),
-                image.getTitle(),
-                image.getDescription(),
-                image.getFileName(),
-                image.getOriginalFileName(),
-                image.getFileType(),
-                image.getFileSize(),
-                image.getUploadDate()
-        );
-    }
 }

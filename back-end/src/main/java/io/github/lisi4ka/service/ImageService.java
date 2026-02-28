@@ -1,8 +1,9 @@
 package io.github.lisi4ka.service;
 
+import io.github.lisi4ka.core.mapper.EntityMapper;
 import io.github.lisi4ka.service.model.Image;
 import io.github.lisi4ka.storage.repository.ImageRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,13 +16,14 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class ImageService {
+
+    private final EntityMapper entityMapper;
+    private final ImageRepository imageRepository;
 
     @Value("${file.upload-dir:uploads}")
     private String uploadDir;
-
-    @Autowired
-    private ImageRepository imageRepository;
 
     public Image saveImage(MultipartFile file, String title, String description) throws IOException {
         // Валидация
@@ -48,21 +50,23 @@ public class ImageService {
         Path filePath = uploadPath.resolve(fileName);
         Files.copy(file.getInputStream(), filePath);
 
-        // Сохраняем информацию в БД
-        Image image = new Image(
-                title,
-                description,
-                fileName,
-                originalFileName,
-                file.getContentType(),
-                file.getSize()
-        );
-
-        return imageRepository.save(image);
+        var image = Image.builder()
+                .title(title)
+                .description(description)
+                .fileName(fileName)
+                .originalFileName(originalFileName)
+                .fileType(file.getContentType())
+                .fileSize(file.getSize())
+                .build();
+        var imageEntity = entityMapper.toEntity(image);
+        imageRepository.save(imageEntity);
+        return image;
     }
 
     public List<Image> getAllImages() {
-        return imageRepository.findAllByOrderByUploadDateDesc();
+        return imageRepository.findAllByOrderByUploadDateDesc().stream()
+                .map(entityMapper::toModel)
+                .toList();
     }
 
     public List<Image> searchImages(String query) {
@@ -70,7 +74,9 @@ public class ImageService {
             return getAllImages();
         }
         String searchQuery = query.trim().toLowerCase();
-        return imageRepository.searchByTitleOrDescription(searchQuery);
+        return imageRepository.searchByTitleOrDescription(searchQuery).stream()
+                .map(entityMapper::toModel)
+                .toList();
     }
 
     public byte[] getImageBytes(String fileName) throws IOException {
@@ -82,21 +88,20 @@ public class ImageService {
     }
 
     public boolean deleteImage(String fileName) throws IOException {
-        // Удаляем файл
-        Path filePath = Paths.get(uploadDir).resolve(fileName);
-        boolean fileDeleted = Files.deleteIfExists(filePath);
+        var filePath = Paths.get(uploadDir).resolve(fileName);
+        var fileDeleted = Files.deleteIfExists(filePath);
 
-        // Удаляем запись из БД
-        Image image = imageRepository.findByFileName(fileName);
-        if (image != null) {
-            imageRepository.delete(image);
+        if (existsByFileName(fileName)) {
+            imageRepository.deleteByFileName(fileName);
             return true;
         }
+
         return fileDeleted;
     }
 
     public Image findByFileName(String fileName) {
-        return imageRepository.findByFileName(fileName);
+        var entity = imageRepository.findByFileName(fileName);
+        return entityMapper.toModel(entity);
     }
 
     public boolean existsByFileName(String fileName) {
@@ -109,4 +114,5 @@ public class ImageService {
         }
         return fileName.substring(fileName.lastIndexOf("."));
     }
+
 }

@@ -1,6 +1,6 @@
 package io.github.lisi4ka.storage.repository;
 
-import io.github.lisi4ka.service.model.Image;
+import io.github.lisi4ka.storage.entity.ImageEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -9,20 +9,22 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ImageRepository extends JpaRepository<Image, Long> {
+public interface ImageRepository extends JpaRepository<ImageEntity, Long> {
 
-    List<Image> findByTitleContainingIgnoreCase(String title);
+    List<ImageEntity> findByTitleContainingIgnoreCase(String title);
 
-    Image findByFileName(String fileName);
+    ImageEntity findByFileName(String fileName);
 
-    @Query("SELECT i FROM Image i WHERE LOWER(i.title) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
+    @Query("SELECT i FROM ImageEntity i WHERE LOWER(i.title) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
             "LOWER(i.description) LIKE LOWER(CONCAT('%', :query, '%')) " +
             "ORDER BY i.uploadDate DESC")
-    List<Image> searchByTitleOrDescription(@Param("query") String query);
+    List<ImageEntity> searchByTitleOrDescription(@Param("query") String query);
 
-    List<Image> findAllByOrderByUploadDateDesc();
+    List<ImageEntity> findAllByOrderByUploadDateDesc();
 
     boolean existsByFileName(String fileName);
 
     long count();
+
+    void deleteByFileName(String fileName);
 }
