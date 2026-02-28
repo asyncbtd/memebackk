@@ -1,47 +1,31 @@
-package com.example.imagegallery.model;
+package io.github.lisi4ka.dto;
 
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "images")
-public class Image {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class ImageResponse {
     private Long id;
-
-    @Column(nullable = false)
     private String title;
-
-    @Column(length = 1000)
     private String description;
-
-    @Column(nullable = false, unique = true)
     private String fileName;
-
-    @Column(nullable = false)
     private String originalFileName;
-
-    @Column(nullable = false)
     private String fileType;
-
     private Long fileSize;
-
-    @Column(nullable = false)
     private LocalDateTime uploadDate;
 
     // Конструкторы, геттеры и сеттеры
-    public Image() {}
+    public ImageResponse() {}
 
-    public Image(String title, String description, String fileName,
-                 String originalFileName, String fileType, Long fileSize) {
+    public ImageResponse(Long id, String title, String description, String fileName,
+                         String originalFileName, String fileType, Long fileSize,
+                         LocalDateTime uploadDate) {
+        this.id = id;
         this.title = title;
         this.description = description;
         this.fileName = fileName;
         this.originalFileName = originalFileName;
         this.fileType = fileType;
         this.fileSize = fileSize;
-        this.uploadDate = LocalDateTime.now();
+        this.uploadDate = uploadDate;
     }
 
     // Геттеры и сеттеры...

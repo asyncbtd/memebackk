@@ -9,7 +9,7 @@
         <relativePath/>
     </parent>
 
-    <groupId>com.example</groupId>
+    <groupId>io.github.lisi4ka</groupId>
     <artifactId>image-gallery</artifactId>
     <packaging>jar</packaging>
     <version>1.0.0</version>

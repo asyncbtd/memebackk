@@ -1,8 +1,8 @@
-package com.example.imagegallery.controller;
+package io.github.lisi4ka.controller;
 
-import com.example.imagegallery.model.Image;
-import com.example.imagegallery.dto.ImageResponse;
-import com.example.imagegallery.service.ImageService;
+import io.github.lisi4ka.model.Image;
+import io.github.lisi4ka.dto.ImageResponse;
+import io.github.lisi4ka.service.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

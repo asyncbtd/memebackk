@@ -1,4 +1,4 @@
-package com.example.imagegallery;
+package io.github.lisi4ka;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
